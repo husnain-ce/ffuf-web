@@ -1,0 +1,21 @@
+FROM python:3.10.6-alpine3.16
+
+COPY --from=golang:1.19.0-alpine3.16 /usr/local/go/ /usr/local/go
+
+ENV PATH="/usr/local/go/bin:${PATH}"
+
+RUN go install github.com/ffuf/ffuf@v1.5.0
+
+RUN ln -s ~/go/bin/ffuf /usr/sbin/ffuf
+
+WORKDIR /backend
+
+COPY requirements.txt requirements.txt
+
+RUN pip install -r requirements.txt
+
+COPY . .
+
+EXPOSE 8000
+
+CMD [ "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80", "--reload" ]

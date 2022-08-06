@@ -1,0 +1,11 @@
+# scripts
+init.sh
+
+# pycache
+__pycache__
+
+# dev env
+venv__backend
+
+# outputs
+outputs

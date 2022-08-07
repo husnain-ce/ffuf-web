@@ -1,22 +1,4 @@
-# backend
-
-# venv
-venv_backend
-
-# tmp
-backend/outputs
-backend/seclists/test
-
-seclists_dict.json
-
-# __pycache__
-__pycache__
-
-# seclists
-backend/seclists
-
-
-# frontend
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
 /node_modules
@@ -24,14 +6,14 @@ backend/seclists
 .pnp.js
 
 # testing
-frontend/coverage
+/coverage
 
 # next.js
-frontend/.next/
-frontend/out/
+/.next/
+/out/
 
 # production
-frontend/build
+/build
 
 # misc
 .DS_Store

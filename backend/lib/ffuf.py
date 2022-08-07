@@ -21,6 +21,8 @@ class FFUF:
 
 	def get_output_file_path(self, path: str):
 		path = Path(path)
+		if not path.parent.exists():
+			path.parent.mkdir(parents=True)
 		return path.parent.resolve() / f"{path.name}_{time_ns()}{''.join(path.suffixes)}" 
 
 	def add_url(self, url: str, custom_query: str | None):
@@ -254,7 +256,7 @@ class FFUF:
 
 	def get_ffuf_results(self, output_file: Path):
 		with open(output_file, "r") as f:
-			return json_load(f)["commandline"]
+			return json_load(f)["results"]
 
 	"""
 		options = {
@@ -265,11 +267,16 @@ class FFUF:
 		}
 	"""
 	def run(self, url_dict: dict, word_lists: list[dict], input_options: dict | None = None, matcher_options: dict | None = None, filter_options: dict | None = None, output_file: str | None = None):
+		print(url_dict, word_lists)
 		if not url_dict or not len(word_lists):
 			raise ValueError()
 
 		input_options = None if input_options is None or not input_options else input_options
 		output_file = self.default_output_path if output_file is None or not len(output_file) else self.get_output_file_path(output_file)
+
+		# transform string into valid paths
+		for wl in word_lists:
+			wl["path"] = Path(wl["path"])
 
 		tokenized_command = self.get_command(url_dict, word_lists, input_options, matcher_options, filter_options, output_file)
 

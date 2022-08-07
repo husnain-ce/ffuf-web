@@ -7,10 +7,23 @@ SECLISTS_PATH = "./seclists"
 dl = DirLoader(SECLISTS_PATH)
 ffuf = FFUF(SECLISTS_PATH)
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from typings.fuzz_body import FuzzBody
 
 app = FastAPI()
+
+origins = [
+	"http://localhost:3000"
+]
+
+app.add_middleware(
+	CORSMiddleware,
+	allow_origins=origins,
+	allow_credentials=True,
+	allow_methods=["*"],
+	allow_headers=["*"]
+)
 
 @app.get("/")
 def main():
@@ -34,13 +47,21 @@ def fuzz_url(fuzz_body: FuzzBody):
 			if opt.endswith("codes") or opt.endswith("counts") or opt.endswith("sizes"):
 				filter_options[opt] = normalize_str(filter_options[opt])
 
-	results = ffuf.run(
-		url_dict=fuzz_body.url_dict.dict(),
-		word_lists=[wl.dict() for wl in fuzz_body.word_lists],
-		input_options=input_options,
-		matcher_options=matcher_options,
-		filter_options=filter_options,
-		output_file="./outputs/output.json"
-	)
+	print(matcher_options)
+
+	try:
+		results = ffuf.run(
+			url_dict=fuzz_body.url_dict.dict(),
+			word_lists=[wl.dict() for wl in fuzz_body.word_lists],
+			input_options=input_options,
+			matcher_options=matcher_options,
+			filter_options=filter_options,
+			output_file="./outputs/output.json"
+		)
+	except:
+		raise HTTPException(status_code=400, detail="Invalid params")
+
+	if results is None:
+		raise HTTPException(status_code=400, detail="Invalid params")
 
 	return { "results": results }

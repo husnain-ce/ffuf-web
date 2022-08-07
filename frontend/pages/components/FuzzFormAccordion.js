@@ -1,29 +1,29 @@
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, FormControl, FormLabel, Heading, InputGroup, InputRightElement, Stack } from "@chakra-ui/react";
-import { Field, Form, Formik } from "formik";
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, FormControl, FormLabel, Heading, InputGroup, InputRightElement, Stack, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import MultipleWordListsSelectionBox from "./MultipleWordListsSelectionBox";
 import axios from "axios";
 import UrlSearchBar from "./UrlSearchBar";
 import AdvancedOptions from "./AdvancedOptions";
 import * as urlUtil from "url";
+import {
+	BarChart,
+	Bar,
+	XAxis,
+	YAxis,
+	CartesianGrid,
+	Tooltip,
+	Legend,
+	ResponsiveContainer
+} from "recharts";
 
 export default function FuzzFormAccordion() {
-	const [pathMap, setPathMap] = useState({});
 	const [url, setURL] = useState("");
 	const [wordLists, setWordLists] = useState([{}]);
 	const [matcherOpts, setMatcherOpts] = useState({});
 	const [filterOpts, setFilterOpts] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
-
-	const getPathMap = async () => {
-		const { data } = await axios.get("http://localhost:8000/api/params");
-
-		setPathMap(data);
-	};
-
-	useEffect(() => {
-		getPathMap();
-	}, [pathMap]);
+	const [results, setResults] = useState([]);
+	const toast = useToast();
 
 	const generateFuzzBody = () => {
 		const fuzzBody = {
@@ -59,7 +59,7 @@ export default function FuzzFormAccordion() {
 					v = Number(v);
 				} else if (key === "match_http_status_codes") {
 					if (v !== "all") {
-						v = v.split(",").map(_ => ~(Number(_.trim())))
+						v = v.split(",").map(_ => Math.round(Number(_.trim())))
 					}
 				}
 
@@ -84,12 +84,37 @@ export default function FuzzFormAccordion() {
 	const fuzz = async () => {
 		setIsLoading(true);
 		const fuzzBody = generateFuzzBody();
-		console.log(fuzzBody);
-		const { data } = await axios.post("http://localhost:8000/api/fuzz", {
-			...fuzzBody
-		});
+		// console.log(fuzzBody);
+		try {
+			const res = await axios.post("http://localhost:8000/api/fuzz", {
+				...fuzzBody
+			});
 
-		console.log(JSON.stringify(data, null, 4));
+			// console.log(res);
+			console.log(JSON.stringify(res.data, null, 4));
+			setResults(res.data.results.map((r, idx) => {
+				return {
+					inputs: {
+						...r.input
+					},
+					status: r.status,
+					length: r.length,
+					words: r.words,
+					lines: r.lines
+				}
+			}));
+			setIsLoading(false);
+		} catch (e) {
+			setIsLoading(false);
+			toast({
+				title: "Fuzzing failed!",
+				description: "Please make sure that your URL is valid, at least one word list is selected, keywords are corresponding and valid inputs to advanced options are provided.",
+				status: "error",
+				duration: 9000,
+				isClosable: true
+			});
+			setResults([]);
+		}
 	};
 
 	return (
@@ -123,7 +148,7 @@ export default function FuzzFormAccordion() {
 						</h2>
 						<AccordionPanel pb={4}>
 							{/* Word list selection */}
-							<MultipleWordListsSelectionBox wordLists={wordLists} setWordLists={setWordLists} pathMap={pathMap} />
+							<MultipleWordListsSelectionBox wordLists={wordLists} setWordLists={setWordLists} />
 						</AccordionPanel>
 					</AccordionItem>							
 					{/* Advanced matcher and filter options */}
@@ -141,6 +166,32 @@ export default function FuzzFormAccordion() {
 						</AccordionPanel>
 					</AccordionItem>
 				</Accordion>
+				{ results && results.length && results.length > 0 && (
+					<Stack direction="column" mt={5}>
+						<Box width="2xl" maxWidth="2xl" overflowX="auto">
+							<ResponsiveContainer width={730} height={300}>
+								<BarChart data={results.map(r => {
+									const inputs = Object.keys(r.inputs);
+									return {
+										name: r.inputs[inputs[0]],
+										length: r.length,
+										words: r.words,
+										lines: r.lines
+									};
+								})} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="name" />
+									<YAxis />
+									<Tooltip />
+									<Legend />
+									<Bar dataKey="length" fill="#8884d8" />
+									<Bar dataKey="words" fill="#82ca9d" />
+									<Bar dataKey="lines" fill="#8dd1e1" />
+								</BarChart>
+							</ResponsiveContainer>
+						</Box>
+					</Stack>
+				)}
 			</Stack>
 		</Box>
 	);

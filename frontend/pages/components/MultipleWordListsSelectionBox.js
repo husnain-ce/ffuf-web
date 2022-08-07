@@ -1,9 +1,21 @@
 import { IconButton, Stack } from "@chakra-ui/react";
 import WordListSelectionMenu from "./WordListSelectionMenu";
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-export default function MultipleWordListsSelectionBox({ wordLists, setWordLists, pathMap, ...props }) {
+export default function MultipleWordListsSelectionBox({ wordLists, setWordLists, ...props }) {
+	const [pathMap, setPathMap] = useState({});
+	const getPathMap = async () => {
+		const { data } = await axios.get("http://localhost:8000/api/params");
+
+		setPathMap(data);
+	};
+
+	useEffect(() => {
+		getPathMap();
+	}, []);
+
 	const addWordList = () => {
 		setWordLists([...wordLists, {}]);
 	};

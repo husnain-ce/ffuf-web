@@ -1,4 +1,5 @@
-import { Checkbox, CheckboxGroup, Heading, Input, Stack } from "@chakra-ui/react";
+import { QuestionIcon } from "@chakra-ui/icons";
+import { Checkbox, CheckboxGroup, Heading, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Stack, Tooltip, useDisclosure } from "@chakra-ui/react";
 import { useState } from "react";
 
 const matchOptions = [
@@ -36,6 +37,7 @@ const matchOptions = [
 
 export default function MatcherOptions({ matcherOpts, setMatcherOpts, ...props }) {
 	const [selectedOpts, setSelectedOpts] = useState([]);
+	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	const selectOptions = (v) => {
 		setSelectedOpts(v);
@@ -60,9 +62,12 @@ export default function MatcherOptions({ matcherOpts, setMatcherOpts, ...props }
 
 	return (
 		<Stack spacing={2} direction="column">
-			<Heading fontSize="md">
-				Matcher Options:
-			</Heading>
+			<Stack direction="row" justifyContent="space-between">
+				<Heading fontSize="md">
+					Matcher Options:
+				</Heading>
+				<IconButton size="sm" fontSize="lg" icon={<QuestionIcon />} onClick={onOpen} />
+			</Stack> 
 			<CheckboxGroup onChange={(v) => selectOptions(v)} colorScheme="green" defaultValue={[]}>
 				{ matchOptions && matchOptions.map((o, idx) => (
 					<Stack key={idx} direction="row" spacing={2} alignItems="center">
@@ -73,6 +78,26 @@ export default function MatcherOptions({ matcherOpts, setMatcherOpts, ...props }
 					</Stack>
 				))}
 			</CheckboxGroup>
+			<Modal isOpen={isOpen} onClose={onClose}>
+				<ModalOverlay />
+				<ModalContent>
+					<ModalHeader textAlign="center">Matcher Options Help</ModalHeader>
+					<ModalCloseButton />
+					<ModalBody>
+						<strong>
+							<u>There are 5 matcher options:</u>
+						</strong>
+						<ul>
+							<li>Match by HTTP status codes - Provide a comma-separated list of valid HTTP status codes you want to match by. "all" is also a valid input for all HTTP status codes</li>
+							<li>Match by Response Line Count - Provide a numerical value greater than 0, and all responses having equivalent line count will be returned</li>
+							<li>Match by Regular Expression - Provide a valid regular expression to match by</li>
+							<li>Match by Response Size - Provide a numerical value to match against the corresponding responses' payload size</li>
+							<li>Match by Response Time - Provide a numerical value preceded by {"<"} or {">"} to get responses within that range. {"("}e.g. {">"}100, {"<"}100{")"} </li>
+							<li>Match by Response Word Count - Provide a numerical value greater than 0, and all responses having equivalent word count will be returned</li>
+						</ul>
+					</ModalBody>
+				</ModalContent>
+			</Modal>
 		</Stack>
 	);
 }

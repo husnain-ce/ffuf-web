@@ -2,33 +2,42 @@ import Head from 'next/head'
 import Image from 'next/image'
 // import styles from '../styles/Home.module.css'
 import { Box, Center, Heading, Stack } from '@chakra-ui/react';
-import FuzzForm from './components/FuzzForm';
-import WordListSelectionMenu from './components/WordListSelectionMenu';
 import FuzzFormAccordion from './components/FuzzFormAccordion';
+import { motion } from "framer-motion";
 
 export default function Home() {
   return (
     <div style={{ height: "100%" }}>
-      <Head>
-        <title>Web Fuzzer</title>
-        <meta name="description" content="An interactive UI for ffuf - a web fuzzing tool" />
-        {/* <link rel="icon" href="/favicon.ico" /> */}
-      </Head>
+      <motion.div
+        style={{ height: "100%" }}
+        animate={{
+          background: "linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB)",
+          backgroundSize: "400% 400%",
+          backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
+        }}
+        transition={{ repeat: Infinity, repeatDelay: 2, ease: "easeIn", duration: 10 }}
+      >
+        <Head>
+          <title>Web Fuzzer</title>
+          <meta name="description" content="An interactive UI for ffuf - a web fuzzing tool" />
+          {/* <link rel="icon" href="/favicon.ico" /> */}
+        </Head>
 
-      <main style={{ height: "100%" }}>
-        { /* <a href="https://www.flaticon.com/free-icons/cyber-security" title="cyber security icons">Cyber security icons created by Freepik - Flaticon</a> */ }
-        <Box style={{ position: "absolute", zIndex: -1, top: "50px", left: "50px", opacity: 0.4, transform: "rotate(-45deg)" }}>
-          <Image src="/assets/cyber-security.png" width="300" height="260" alt="" />
-        </Box>
-        <Center height="100%">
-          <Box justifyContent="center" alignItems="center">
-            <Stack direction="column" spacing={5} alignItems="center">
-              <Heading fontSize="2xl">Web Fuzzer</Heading>
-              <FuzzFormAccordion />
-            </Stack>
-          </Box>
-        </Center>
-      </main>
+        <main style={{ height: "100%" }}>
+          { /* <a href="https://www.flaticon.com/free-icons/cyber-security" title="cyber security icons">Cyber security icons created by Freepik - Flaticon</a> */ }
+          {/* <Box style={{ position: "absolute", zIndex: -1, top: "50px", left: "50px", opacity: 0.4, transform: "rotate(-45deg)" }}>
+            <Image src="/assets/cyber-security.png" width="300" height="260" alt="" />
+          </Box> */}
+          <Center height="100%">
+            <Box justifyContent="center" alignItems="center" px={8} py={7} borderRadius={10} backgroundColor="white" boxShadow={"1px 1px 5px rgba(0, 0, 0, 0.7)"} border="1px solid" borderColor="gray.300">
+              <Stack direction="column" spacing={5} alignItems="center">
+                <Heading fontSize="2xl">Web Fuzzer</Heading>
+                <FuzzFormAccordion />
+              </Stack>
+            </Box>
+          </Center>
+        </main>
+      </motion.div>
     </div>
   )
 }

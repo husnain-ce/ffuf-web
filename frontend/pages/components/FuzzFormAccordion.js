@@ -5,24 +5,13 @@ import axios from "axios";
 import UrlSearchBar from "./UrlSearchBar";
 import AdvancedOptions from "./AdvancedOptions";
 import * as urlUtil from "url";
-import {
-	BarChart,
-	Bar,
-	XAxis,
-	YAxis,
-	CartesianGrid,
-	Tooltip,
-	Legend,
-	ResponsiveContainer
-} from "recharts";
 
-export default function FuzzFormAccordion() {
+export default function FuzzFormAccordion({ results, setResults, scroller }) {
 	const [url, setURL] = useState("");
 	const [wordLists, setWordLists] = useState([{}]);
 	const [matcherOpts, setMatcherOpts] = useState({});
 	const [filterOpts, setFilterOpts] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
-	const [results, setResults] = useState([]);
 	const toast = useToast();
 
 	const generateFuzzBody = () => {
@@ -91,7 +80,7 @@ export default function FuzzFormAccordion() {
 			});
 
 			// console.log(res);
-			console.log(JSON.stringify(res.data, null, 4));
+			// console.log(JSON.stringify(res.data, null, 4));
 			setResults(res.data.results.map((r, idx) => {
 				return {
 					inputs: {
@@ -115,6 +104,8 @@ export default function FuzzFormAccordion() {
 			});
 			setResults([]);
 		}
+
+		scroller();
 	};
 
 	return (
@@ -166,32 +157,6 @@ export default function FuzzFormAccordion() {
 						</AccordionPanel>
 					</AccordionItem>
 				</Accordion>
-				{ results && results.length && results.length > 0 && (
-					<Stack direction="column" mt={5}>
-						<Box width="2xl" maxWidth="2xl" overflowX="auto">
-							<ResponsiveContainer width={730} height={300}>
-								<BarChart data={results.map(r => {
-									const inputs = Object.keys(r.inputs);
-									return {
-										name: r.inputs[inputs[0]],
-										length: r.length,
-										words: r.words,
-										lines: r.lines
-									};
-								})} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-									<CartesianGrid strokeDasharray="3 3" />
-									<XAxis dataKey="name" />
-									<YAxis />
-									<Tooltip />
-									<Legend />
-									<Bar dataKey="length" fill="#8884d8" />
-									<Bar dataKey="words" fill="#82ca9d" />
-									<Bar dataKey="lines" fill="#8dd1e1" />
-								</BarChart>
-							</ResponsiveContainer>
-						</Box>
-					</Stack>
-				)}
 			</Stack>
 		</Box>
 	);

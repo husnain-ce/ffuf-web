@@ -5,7 +5,7 @@ import { Box, Center, Heading, Stack } from '@chakra-ui/react';
 import FuzzFormAccordion from './components/FuzzFormAccordion';
 import { motion } from "framer-motion";
 import { useRef, useState } from 'react';
-import CustomBarChart from './components/CustomBarCharT';
+import CustomBarChart from './components/CustomBarChart';
 
 export default function Home() {
 	const [results, setResults] = useState([]);

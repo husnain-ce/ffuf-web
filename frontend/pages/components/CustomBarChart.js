@@ -28,7 +28,7 @@ export default function CustomBarChart({ data }) {
 	};
 
 	return (
-		<Box>
+		<Box width="2xl" height="md">
 			<ResponsiveContainer>
 				<BarChart data={dataTransformer(data)} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
 					<CartesianGrid strokeDasharray="3 3" />

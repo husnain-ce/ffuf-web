@@ -45,7 +45,7 @@ export default function FilterOptions({ filterOpts, setFilterOpts, ...props }) {
 		const _filterOpts = {};
 		
 		v.forEach((o, idx) => {
-			_filterOpts[o] = null;
+			_filterOpts[o] = filterOpts[o] ?? null;
 		});
 		setFilterOpts(_filterOpts);
 		// setMatcherOpts
@@ -74,7 +74,7 @@ export default function FilterOptions({ filterOpts, setFilterOpts, ...props }) {
 						<Checkbox width="48" value={o.value} size="sm" colorScheme="green">
 							{o.label}
 						</Checkbox>
-						<Input onChange={(e) => updateFilterOpts(o.value, e.target.value)} justifySelf="flex-end" disabled={!selectedOpts.includes(o.value)} type={o.inputType ? 'text' : o.inputType} size="sm" maxWidth="32" />
+						<Input value={filterOpts[o.value] ?? ""} onChange={(e) => updateFilterOpts(o.value, e.target.value)} justifySelf="flex-end" disabled={!selectedOpts.includes(o.value)} type={o.inputType ? 'text' : o.inputType} size="sm" maxWidth="32" />
 					</Stack>
 				))}
 			</CheckboxGroup>
@@ -83,7 +83,7 @@ export default function FilterOptions({ filterOpts, setFilterOpts, ...props }) {
 				<ModalContent>
 					<ModalHeader textAlign="center">Filter Options Help</ModalHeader>
 					<ModalCloseButton />
-					<ModalBody>
+					<ModalBody px={10} py={5}>
 						<strong>
 							<u>There are 5 filter options:</u>
 						</strong>

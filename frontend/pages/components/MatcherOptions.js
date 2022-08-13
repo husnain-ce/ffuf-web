@@ -45,7 +45,7 @@ export default function MatcherOptions({ matcherOpts, setMatcherOpts, ...props }
 		const _matcherOptions = {};
 		
 		v.forEach((o, idx) => {
-			_matcherOptions[o] = null;
+			_matcherOptions[o] = matcherOpts[o] ?? null;
 		});
 		setMatcherOpts(_matcherOptions);
 		// setMatcherOpts
@@ -74,7 +74,7 @@ export default function MatcherOptions({ matcherOpts, setMatcherOpts, ...props }
 						<Checkbox width="48" value={o.value} size="sm" colorScheme="green">
 							{o.label}
 						</Checkbox>
-						<Input onChange={(e) => updateMatcherOpts(o.value, e.target.value)} justifySelf="flex-end" disabled={!selectedOpts.includes(o.value)} type={o.inputType ? 'text' : o.inputType} size="sm" maxWidth="32" />
+						<Input value={matcherOpts[o.value] ?? ""} onChange={(e) => updateMatcherOpts(o.value, e.target.value)} justifySelf="flex-end" disabled={!selectedOpts.includes(o.value)} type={o.inputType ? 'text' : o.inputType} size="sm" maxWidth="32" />
 					</Stack>
 				))}
 			</CheckboxGroup>
@@ -83,7 +83,7 @@ export default function MatcherOptions({ matcherOpts, setMatcherOpts, ...props }
 				<ModalContent>
 					<ModalHeader textAlign="center">Matcher Options Help</ModalHeader>
 					<ModalCloseButton />
-					<ModalBody>
+					<ModalBody px={10} py={5}>
 						<strong>
 							<u>There are 5 matcher options:</u>
 						</strong>

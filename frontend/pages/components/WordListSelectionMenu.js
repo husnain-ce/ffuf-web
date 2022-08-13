@@ -1,31 +1,45 @@
-import { Button, Input, InputGroup, InputLeftAddon, Menu, MenuButton, MenuItem, MenuList, Stack } from "@chakra-ui/react";
-import { ChevronDownIcon} from "@chakra-ui/icons";
+import { Button, forwardRef, Input, InputGroup, InputLeftAddon, Menu, MenuButton, MenuItem, MenuList, Stack } from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
+import SelectFile from "./SelectFile";
 
-function WordListSubMenu({ wordListHandler, pathName, pathMap, ...props }) {
+const WordListSubMenu = forwardRef((props, ref) => {
+	const { wordListHandler, pathName, pathMap } = props;
+	const wordListFiles = [];
+
 	return (
 		<Stack direction="column" spacing={5}>
 			<Menu>
-				<MenuButton as={Button} my={2} width="xs" style={{ borderRadius: 0 }} rightIcon={<ChevronDownIcon />}>
+				<MenuButton ref={ref} as={Button} my={2} width="xs" style={{ borderRadius: 0 }} rightIcon={<ChevronDownIcon />}>
 					{ pathName }
 				</MenuButton>
 				<MenuList p={2}>
 					{ pathMap && Object.keys(pathMap) && Object.keys(pathMap).map((f, idx) => {
-						return typeof pathMap[f] === 'string' ? (
-							<MenuItem my={2} key={idx} onClick={() => wordListHandler(pathMap[f])}>{f}*</MenuItem>
-						) : (
-							<MenuItem my={2} key={idx} as={WordListSubMenu} wordListHandler={wordListHandler} pathName={f} pathMap={pathMap[f]} />
-						)}
+						if (typeof pathMap[f] === 'string') {
+							wordListFiles.push({ name: f, path: pathMap[f] });
+						} else {
+							return (
+								<MenuItem my={2} key={idx} as={WordListSubMenu} wordListHandler={wordListHandler} pathName={f} pathMap={pathMap[f]} />
+							)
+						}
+					})}
+					{ wordListFiles.length > 0 && (
+						<SelectFile
+						my={2}
+						files={wordListFiles}
+						onChangeHandler={(e) => wordListHandler(e.target.value)}
+						/>
 					)}
 				</MenuList>
 			</Menu>
 		</Stack>
 	);
-}
+});
 
 export default function WordListSelectionMenu({ initialWordList, initialKeyword, updatePath, updateKeyword, pathMap, field, form, ...props }) {
 	const [wordList, setWordList] = useState(initialWordList);
 	const [keyword, setKeyword] = useState("");
+	const wordListFiles = [];
 
 	useEffect(() => {
 		setWordList(initialWordList);
@@ -51,11 +65,22 @@ export default function WordListSelectionMenu({ initialWordList, initialKeyword,
 					</MenuButton>
 					<MenuList p={2}>
 						{ pathMap && Object.keys(pathMap) && Object.keys(pathMap).map((f, idx) => {
-							return typeof pathMap[f] === 'string' ? (
-								<MenuItem key={idx} onClick={() => handleWordListSelection(pathMap[f])}>{f}*</MenuItem>
-							) : (
-								<MenuItem key={idx} as={WordListSubMenu} wordListHandler={handleWordListSelection} pathName={f} pathMap={pathMap[f]} />
-							)}
+							if (typeof pathMap[f] === 'string') {
+								wordListFiles.push({ name: f, path: pathMap[f] });
+								return null;
+							} else {
+								return (
+									<MenuItem key={idx} as={WordListSubMenu} wordListHandler={handleWordListSelection} pathName={f} pathMap={pathMap[f]} />
+								)
+							}
+							}
+						)}
+						{ wordListFiles.length > 0 && (
+							<SelectFile 
+							my={2}
+							files={wordListFiles} 
+							onChangeHandler={(e) => handleWordListSelection(e.target.value)}
+							/>
 						)}
 					</MenuList>
 				</Menu>

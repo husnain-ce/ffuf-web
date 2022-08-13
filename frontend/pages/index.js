@@ -35,7 +35,17 @@ export default function Home() {
 			semiSegment.push({ ...resultsToTake[i] });
 		}
 
-		return segmentedResults;
+		if (segmentedResults.length > 0) {
+      return segmentedResults.map((r, idx) => (
+        <Stack key={idx} direction="row" spacing={2}>
+          { r.map((data, dataIdx) => (
+            <CustomBarChart key={dataIdx} data={data} />
+            )
+          )}
+        </Stack>
+      ));
+    }
+    return null;
 	}
 
   return (
@@ -69,17 +79,10 @@ export default function Home() {
             </Box>
           </Center>
           <Center ref={resultsRef}>
-            { results && results.length && results.length > 0 && (
+            { results && results.length > 0 && (
             <Stack width="97vw" bgColor="white" mx={5} direction="column" my={5} borderRadius={10}>
               <Heading textAlign="center" fontSize="3xl" mb={5} mt={3}>Results</Heading>
-              { getSegmentedResults().map((r, idx) => (
-                <Stack key={idx} direction="row" spacing={2}>
-                  { r.map((data, dataIdx) => (
-                    <CustomBarChart key={dataIdx} data={data} />
-                    )
-                  )}
-                </Stack>
-              )) }
+              { getSegmentedResults() }
 					</Stack>
 				)}
           </Center>

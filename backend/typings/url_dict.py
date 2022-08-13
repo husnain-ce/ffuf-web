@@ -1,6 +1,8 @@
 from typing import Optional
 from pydantic import BaseModel, constr
 
+# Visit https://regexr.com/6rqve to test the regex
+
 class URLDict(BaseModel):
-	url: constr(regex=r"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)")
+	url: constr(regex=r"^(?:http?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$")
 	custom_query: Optional[str]

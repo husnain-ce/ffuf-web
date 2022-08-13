@@ -12,6 +12,10 @@ import {
 import CustomToolTip from "./CustomToolTip";
 
 export default function CustomBarChart({ data }) {
+	if (!data.length) {
+		return null;
+	}
+
 	// console.log(data);
 	const dataTransformer = (data) => {
 		return data.map(r => {

@@ -47,7 +47,7 @@ def fuzz_url(fuzz_body: FuzzBody):
 			if opt.endswith("codes") or opt.endswith("counts") or opt.endswith("sizes"):
 				filter_options[opt] = normalize_str(filter_options[opt])
 
-	print(matcher_options)
+	# print(matcher_options)
 
 	try:
 		results = ffuf.run(

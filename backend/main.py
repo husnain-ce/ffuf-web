@@ -25,9 +25,12 @@ app.add_middleware(
 	allow_headers=["*"]
 )
 
-@app.get("/")
-def main():
-	return { "Hello": "World" }
+@app.get("/api/kill")
+def kill():
+	if ffuf.running_proc is not None:
+		ffuf.kill_running_proc()
+	
+	return { "success": True }
 
 @app.get("/api/params")
 def get_params():
@@ -58,10 +61,10 @@ def fuzz_url(fuzz_body: FuzzBody):
 			filter_options=filter_options,
 			output_file="./outputs/output.json"
 		)
-	except:
-		raise HTTPException(status_code=400, detail="Invalid params")
+	except Exception as e:
+		raise HTTPException(status_code=400, detail=str(e))
 
 	if results is None:
-		raise HTTPException(status_code=400, detail="Invalid params")
+		raise HTTPException(status_code=400, detail=str(e))
 
 	return { "results": results }

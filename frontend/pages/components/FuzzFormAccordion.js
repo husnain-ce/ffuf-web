@@ -105,6 +105,19 @@ export default function FuzzFormAccordion({ results, setResults, scroller }) {
 				...fuzzBody
 			});
 
+			if (!res.data.length) {
+				setIsLoading(false);
+				toast({
+					title: "No Results!",
+					description: "There were no results obtained for the currently set configuration, this might be due to the provided advanced options yeilding no corresponding results.",
+					status: "warning",
+					duration: 9000,
+					isClosable: true
+				});
+
+				return;
+			}
+
 			// console.log(res);
 			// console.log(JSON.stringify(res.data, null, 4));
 			setResults(res.data.results.map((r, idx) => {

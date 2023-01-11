@@ -1,3 +1,7 @@
+import os
+import glob
+from functools import reduce
+
 from lib.dir_loader import DirLoader
 from lib.ffuf import FFUF
 from lib.utilities import normalize_str
@@ -29,7 +33,7 @@ app.add_middleware(
 def kill():
 	if ffuf.running_proc is not None:
 		ffuf.kill_running_proc()
-	
+
 	return { "success": True }
 
 @app.get("/api/params")
@@ -67,4 +71,8 @@ def fuzz_url(fuzz_body: FuzzBody):
 	if results is None:
 		raise HTTPException(status_code=400, detail=str(e))
 
-	return { "results": results }
+	return {
+		"results": results,
+		"file_count": len(glob.glob(SECLISTS_PATH + '/**/*.txt', recursive=True)),
+		"word_count": sum([len(open(l.path).readlines()) for l in fuzz_body.word_lists])
+	}

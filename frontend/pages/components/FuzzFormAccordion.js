@@ -7,7 +7,7 @@ import AdvancedOptions from "./AdvancedOptions";
 import * as urlUtil from "url";
 import { QuestionIcon } from "@chakra-ui/icons";
 
-export default function FuzzFormAccordion({ results, setResults, scroller }) {
+export default function FuzzFormAccordion({ results, setResults, scroller, setResponse }) {
 	const [url, setURL] = useState("");
 	const [wordLists, setWordLists] = useState([{}]);
 	const [matcherOpts, setMatcherOpts] = useState({});
@@ -21,7 +21,7 @@ export default function FuzzFormAccordion({ results, setResults, scroller }) {
 		(async () => {
 			try {
 				await axios.get("http://localhost:8000/api/kill")
-			} catch (e) {}
+			} catch (e) { }
 		})();
 	}, []);
 
@@ -105,7 +105,7 @@ export default function FuzzFormAccordion({ results, setResults, scroller }) {
 				...fuzzBody
 			});
 
-			if (!res.data.length) {
+			if (!res.data.results.length) {
 				setIsLoading(false);
 				toast({
 					title: "No Results!",
@@ -120,6 +120,7 @@ export default function FuzzFormAccordion({ results, setResults, scroller }) {
 
 			// console.log(res);
 			// console.log(JSON.stringify(res.data, null, 4));
+			setResponse(res.data);
 			setResults(res.data.results.map((r, idx) => {
 				return {
 					inputs: {
@@ -128,7 +129,8 @@ export default function FuzzFormAccordion({ results, setResults, scroller }) {
 					status: r.status,
 					length: r.length,
 					words: r.words,
-					lines: r.lines
+					lines: r.lines,
+					duration: r.duration,
 				}
 			}));
 			setIsLoading(false);
@@ -200,7 +202,7 @@ export default function FuzzFormAccordion({ results, setResults, scroller }) {
 							{/* Word list selection */}
 							<MultipleWordListsSelectionBox wordLists={wordLists} setWordLists={setWordLists} />
 						</AccordionPanel>
-					</AccordionItem>							
+					</AccordionItem>
 					{/* Advanced matcher and filter options */}
 					<AccordionItem>
 						<h2 as={Heading}>

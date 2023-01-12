@@ -12,9 +12,6 @@ seclists_dict.json
 # __pycache__
 __pycache__
 
-# seclists
-backend/seclists
-
 
 # frontend
 

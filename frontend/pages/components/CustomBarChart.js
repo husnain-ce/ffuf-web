@@ -26,7 +26,8 @@ export default function CustomBarChart({ data }) {
 				length: r.length,
 				words: r.words,
 				lines: r.lines,
-				status: r.status
+				status: r.status,
+				duration: r.duration,
 			};
 		});
 	};

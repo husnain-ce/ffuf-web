@@ -5,6 +5,9 @@ services:
       dockerfile: "./Dockerfile.dev"
     ports:
       - "8000:80"
+    volumes:
+      - "./backend/outputs/:/backend/outputs/"
+
   frontend:
     build:
       context: "./frontend"

@@ -1,4 +1,4 @@
-# ffuf-web
+# ffuf-web-testing
 
 
 ffuf is fuzzing tool for directory traversel, and we are using to automate the tasks of url finding across the keywork of ffuf.

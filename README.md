@@ -2,7 +2,7 @@
 
 
 ffuf is fuzzing tool for directory traversel, and we are using to automate the tasks of url finding across the keywork of ffuf.
-Also this tool has automation in Python.
+Also this tool has automation in Python. Working in that
 
 
 # Usage
